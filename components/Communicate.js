@@ -11,6 +11,7 @@ const Communicate = function ({route, navigation}) {
         navigation.setOptions({title: `${name}'s Messages`});
     }, []);
     useEffect(function () {
+        //Default messages to 'welcome' a user
         setMessages([
             {
                 _id: 2,
@@ -30,9 +31,11 @@ const Communicate = function ({route, navigation}) {
         ]);
         }, []);
         const onSend = (newMessages) => {
+            //Attach new message to previous ones when sent
             setMessages((previousMessages) => GiftedChat.append(previousMessages, newMessages));
         };
         const renderBubble = (props) => {
+            //White background for left side and black background for user's messages highlighted with white outline 
             return (
                 <Bubble
                     {...props}
@@ -42,8 +45,10 @@ const Communicate = function ({route, navigation}) {
             );
         };
         const renderSystemMessage = (props) => {
+            //Custom white bold style for system messages
             return (<SystemMessage {...props} textStyle={{color: '#FFF', fontWeight: 'bold'}} />);
         };
+        //Premade gifted with custom rendering for bubble and system messages
         return (
             <View style={[styles.all, {backgroundColor: theme}]}>
                 <GiftedChat messages={messages} onSend={messages => onSend(messages)} renderBubble={renderBubble} renderSystemMessage={renderSystemMessage} user={{_id: 0}} renderDay={function () {return null;}} renderTime={function () {return null;}} />
