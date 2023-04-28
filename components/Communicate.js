@@ -1,25 +1,60 @@
-import {useEffect} from 'react';
+/* global Platform */
+
+import {useState, useEffect} from 'react';
 import {StyleSheet, View, Text, Button, TextInput, TouchableWithoutFeedback, ImageBackground, KeyboardAvoidingView} from 'react-native';
+import {Bubble, GiftedChat, SystemMessage} from 'react-native-gifted-chat';
 
 const Communicate = function ({route, navigation}) {
+    const [messages, setMessages] = useState([]);
     const {name, theme} = route.params;
     useEffect(function () {
         navigation.setOptions({title: `${name}'s Messages`});
     }, []);
-    return (
-        /*Container Of Everything With Background From Route*/
-        <KeyboardAvoidingView style={[styles.all, {backgroundColor: theme}]}>
-            {/*Sample White Text For Testing Colour Contrast*/null}
-            <View style={[styles.page, {backgroundColor: theme}]}><Text style={[styles.h3, styles.white]}>{name} wants to communicate</Text></View>
-        </KeyboardAvoidingView>
-    );
+    useEffect(function () {
+        setMessages([
+            {
+                _id: 2,
+                text: `My name is clothing liker. What is your name?`,
+                createdAt: new Date(),
+                user: {
+                    _id: 2,
+                    name: 'Clothing Liker',
+                    avatar: 'https://raw.githubusercontent.com/DelacorteClock/bus/main/tld.png'
+                }
+            }, {
+                _id: 1,
+                text: `${name}...you entered the LeatherPants message room successfully.`,
+                createdAt: 0,
+                system: true
+            }
+        ]);
+        }, []);
+        const onSend = (newMessages) => {
+            setMessages((previousMessages) => GiftedChat.append(previousMessages, newMessages));
+        };
+        const renderBubble = (props) => {
+            return (
+                <Bubble
+                    {...props}
+                    textStyle={{right: {color: '#FFF'}, left: {color: '#000'}}}
+                    wrapperStyle={{right: {backgroundColor: '#000', borderWidth: 2, borderColor: '#FFF'}, left: {backgroundColor: '#FFF'}}}
+                />
+            );
+        };
+        const renderSystemMessage = (props) => {
+            return (<SystemMessage {...props} textStyle={{color: '#FFF', fontWeight: 'bold'}} />);
+        };
+        return (
+            <View style={[styles.all, {backgroundColor: theme}]}>
+                <GiftedChat messages={messages} onSend={messages => onSend(messages)} renderBubble={renderBubble} renderSystemMessage={renderSystemMessage} user={{_id: 0}} renderDay={function () {return null;}} renderTime={function () {return null;}} />
+                {Platform.OS === 'android' ? <KeyboardAvoidingView behavior='height' /> : null}
+            </View>
+        );
 };
 
 const styles = StyleSheet.create({
     all: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
+        flex: 1
     },
     page: {
         flex: 1,
