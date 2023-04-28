@@ -7,8 +7,9 @@ const Communicate = function ({route, navigation}) {
         navigation.setOptions({title: `${name}'s Messages`});
     }, []);
     return (
-        /*Container Of Everything*/
+        /*Container Of Everything With Background From Route*/
         <KeyboardAvoidingView style={[styles.all, {backgroundColor: theme}]}>
+            {/*Sample White Text For Testing Colour Contrast*/null}
             <View style={[styles.page, {backgroundColor: theme}]}><Text style={[styles.h3, styles.white]}>{name} wants to communicate</Text></View>
         </KeyboardAvoidingView>
     );

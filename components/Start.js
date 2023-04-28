@@ -59,6 +59,7 @@ const Start = function ({navigation}) {
                                 </View>
                             </TouchableWithoutFeedback>
                         </View>
+                        {/*Button To Link To Communication Page If Name's Length Is At Least One*/null}
                         <TouchableWithoutFeedback onPress={function () {if (name) {navigation.navigate('Communicate', {name: name, theme: theme});};}}>
                             <View style={[styles.button, styles.isolated]}>
                                 <Text style={[styles.white, styles.h3]}>GO</Text>
