@@ -3,58 +3,56 @@
 import {useState, useEffect} from 'react';
 import {StyleSheet, View, Text, Button, TextInput, TouchableWithoutFeedback, ImageBackground, KeyboardAvoidingView} from 'react-native';
 import {Bubble, GiftedChat, SystemMessage} from 'react-native-gifted-chat';
+import {query, collection, getDocs, addDoc, onSnapshot, orderBy} from 'firebase/firestore';
 
-const Communicate = function ({route, navigation}) {
+const Communicate = function ({route, navigation, db}) {
     const [messages, setMessages] = useState([]);
-    const {name, theme} = route.params;
+    const {name, theme, userId} = route.params;
     useEffect(function () {
         navigation.setOptions({title: `${name}'s Messages`});
     }, []);
     useEffect(function () {
-        //Default messages to 'welcome' a user
-        setMessages([
-            {
-                _id: 2,
-                text: `My name is clothing liker. What is your name?`,
-                createdAt: new Date(),
-                user: {
-                    _id: 2,
-                    name: 'Clothing Liker',
-                    avatar: 'https://raw.githubusercontent.com/DelacorteClock/bus/main/tld.png'
-                }
-            }, {
-                _id: 1,
-                text: `${name}...you entered the LeatherPants message room successfully.`,
-                createdAt: 0,
-                system: true
-            }
-        ]);
-        }, []);
-        const onSend = (newMessages) => {
-            //Attach new message to previous ones when sent
-            setMessages((previousMessages) => GiftedChat.append(previousMessages, newMessages));
+        const q = query(collection(db, 'messages'), orderBy('createdAt', 'desc'));
+        const unsubMessages = onSnapshot(q, function (docs) {
+            var newMessages = [];
+            docs.forEach(function (doc) {
+                newMessages.push({
+                    id: doc.id,
+                    ...doc.data(),
+                    createdAt: new Date(doc.data().createdAt.toMillis())
+                });
+            });
+            setMessages(newMessages);
+        });
+        return function () {
+            if (unsubMessages) unsubMessages();
         };
-        const renderBubble = (props) => {
-            //White background for left side and black background for user's messages highlighted with white outline 
-            return (
-                <Bubble
-                    {...props}
-                    textStyle={{right: {color: '#FFF'}, left: {color: '#000'}}}
-                    wrapperStyle={{right: {backgroundColor: '#000', borderWidth: 2, borderColor: '#FFF'}, left: {backgroundColor: '#FFF'}}}
-                />
-            );
-        };
-        const renderSystemMessage = (props) => {
-            //Custom white bold style for system messages
-            return (<SystemMessage {...props} textStyle={{color: '#FFF', fontWeight: 'bold'}} />);
-        };
-        //Premade gifted with custom rendering for bubble and system messages
+    }, []);
+    const onSend = (newMessages) => {
+        //Attach new message to previous ones when sent
+        addDoc(collection(db, 'messages'), newMessages[0]);
+    };
+    const renderBubble = (props) => {
+        //White background for left side and black background for user's messages highlighted with white outline 
         return (
-            <View style={[styles.all, {backgroundColor: theme}]}>
-                <GiftedChat messages={messages} onSend={messages => onSend(messages)} renderBubble={renderBubble} renderSystemMessage={renderSystemMessage} user={{_id: 0}} renderDay={function () {return null;}} renderTime={function () {return null;}} />
-                {Platform.OS === 'android' ? <KeyboardAvoidingView behavior='height' /> : null}
-            </View>
+            <Bubble
+                {...props}
+                textStyle={{right: {color: '#FFF'}, left: {color: '#000'}}}
+                wrapperStyle={{right: {backgroundColor: '#000', borderWidth: 2, borderColor: '#FFF'}, left: {backgroundColor: '#FFF'}}}
+            />
         );
+    };
+    const renderSystemMessage = (props) => {
+        //Custom white bold style for system messages
+        return (<SystemMessage {...props} textStyle={{color: '#FFF', fontWeight: 'bold'}} />);
+    };
+    //Premade gifted with custom rendering for bubble and system messages
+    return (
+        <View style={[styles.all, {backgroundColor: theme}]}>
+            <GiftedChat messages={messages} onSend={messages => onSend(messages)} renderBubble={renderBubble} renderSystemMessage={renderSystemMessage} user={{_id: userId, name: name}} renderDay={function () {return null;}} renderTime={function () {return null;}} />
+            {Platform.OS === 'android' ? <KeyboardAvoidingView behavior='height' /> : null}
+        </View>
+    );
 };
 
 const styles = StyleSheet.create({

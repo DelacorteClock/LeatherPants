@@ -1,5 +1,6 @@
 import {useState, useEffect} from 'react';
-import {StyleSheet, View, Text, Button, TextInput, TouchableWithoutFeedback, ImageBackground, KeyboardAvoidingView} from 'react-native';
+import {Alert, StyleSheet, View, Text, Button, TextInput, TouchableWithoutFeedback, ImageBackground, KeyboardAvoidingView} from 'react-native';
+import {getAuth, signInAnonymously} from 'firebase/auth';
 
 const Start = function ({navigation}) {
     //Colour theme state
@@ -9,6 +10,16 @@ const Start = function ({navigation}) {
     useEffect(function () {
         navigation.setOptions({headerShown: false});
     }, []);
+    //Auth feature
+    const auth = getAuth();
+    const registerUser = function () {
+        signInAnonymously(auth).then(function (res) {
+            navigation.navigate('Communicate', {name: name, theme: theme, userId: res.user.uid});
+            Alert.alert('Entry attempt was successful.');
+        }).catch(function (error) {
+            Alert.alert('Entry attempt was unsuccessful.');
+        });
+    };
     return (
         /*Container Of Everything*/
         <KeyboardAvoidingView style={styles.all}>
@@ -60,7 +71,7 @@ const Start = function ({navigation}) {
                             </TouchableWithoutFeedback>
                         </View>
                         {/*Button To Link To Communication Page If Name's Length Is At Least One*/null}
-                        <TouchableWithoutFeedback onPress={function () {if (name) {navigation.navigate('Communicate', {name: name, theme: theme});};}}>
+                        <TouchableWithoutFeedback onPress={registerUser}>
                             <View style={[styles.button, styles.isolated]}>
                                 <Text style={[styles.white, styles.h3]}>GO</Text>
                             </View>
