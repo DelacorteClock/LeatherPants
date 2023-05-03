@@ -4,7 +4,10 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {TransitionPresets} from '@react-navigation/stack';
 import {initializeApp} from 'firebase/app';
-import {getFirestore} from 'firebase/firestore';
+import {getFirestore, disableNetwork, enableNetwork} from 'firebase/firestore';
+import {useNetInfo} from '@react-native-community/netinfo';
+import {useEffect} from 'react';
+import {LogBox, Alert} from 'react-native';
 
 const Stack = createNativeStackNavigator();
 export default function App() {
@@ -20,12 +23,21 @@ export default function App() {
     };
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    var connexion = useNetInfo();
+    useEffect(function () {
+        if (connexion.isConnected === false) {
+            Alert.alert('Your connexion failed...');
+            disableNetwork(db);
+        } else if (connexion.isConnected === true) {
+            enableNetwork(db);
+        }
+    }, [connexion.isConnected]);
     return (
         <NavigationContainer>
             <Stack.Navigator initialRouteName='Start'>
                 <Stack.Screen name='Start' component={Start} />
                 <Stack.Screen name='Communicate'>
-                    {props => <Communicate db={db} {...props} />}
+                    {props => <Communicate isConnected={connexion.isConnected} db={db} {...props} />}
                 </Stack.Screen>
             </Stack.Navigator>
         </NavigationContainer>

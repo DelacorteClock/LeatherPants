@@ -13,12 +13,16 @@ const Start = function ({navigation}) {
     //Auth feature
     const auth = getAuth();
     const registerUser = function () {
-        signInAnonymously(auth).then(function (res) {
-            navigation.navigate('Communicate', {name: name, theme: theme, userId: res.user.uid});
-            Alert.alert('Entry attempt was successful.');
-        }).catch(function (error) {
-            Alert.alert('Entry attempt was unsuccessful.');
-        });
+        if (name.length > 0) {
+            signInAnonymously(auth).then(function (res) {
+                navigation.navigate('Communicate', {name: name, theme: theme, userId: res.user.uid});
+                Alert.alert('Entry attempt was successful.');
+            }).catch(function (error) {
+                Alert.alert('Entry attempt was unsuccessful.');
+            });
+        } else {
+            Alert.alert('You must type a name.');
+        }
     };
     return (
         /*Container Of Everything*/
