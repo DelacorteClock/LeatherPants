@@ -4,9 +4,11 @@ import {useState, useEffect} from 'react';
 import {StyleSheet, View, Text, Button, TextInput, TouchableWithoutFeedback, ImageBackground, KeyboardAvoidingView} from 'react-native';
 import {Bubble, GiftedChat, SystemMessage, InputToolbar} from 'react-native-gifted-chat';
 import {query, collection, getDocs, addDoc, onSnapshot, orderBy} from 'firebase/firestore';
+import CustomActions from './CustomActions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import MapView from 'react-native-maps';
 
-const Communicate = function ( {route, navigation, db, isConnected}) {
+const Communicate = function ({route, navigation, db, storage, isConnected}) {
     const [messages, setMessages] = useState([]);
     const {name, theme, userId} = route.params;
     useEffect(function () {
@@ -68,12 +70,28 @@ const Communicate = function ( {route, navigation, db, isConnected}) {
     };
     const renderInputToolbar = (props) => {
         if (isConnected) {
-            return <InputToolbar {...props} />;
+            return <InputToolbar {...props} containerStyle={{borderTopWidth: 0, justifyContent: 'center'}} />;
         } else {
             return null;
         }
     };
-    //Premade gifted with custom rendering for bubble and system messages
+    //For custom action choice system
+    const renderCustomActions = (props) => {
+        return <CustomActions themeHue={theme} storage={storage} userId={userId} {...props} />;
+    };
+    //For custom map if needed
+    const renderCustomView = (props) => {
+        const {currentMessage} = props;
+        if (currentMessage.location) {
+            return (
+                <MapView 
+                    style={{width: 200, height: 150, margin: 10, borderRadius: 20}}
+                    region={{latitude: currentMessage.location.latitude, longitude: currentMessage.location.longitude, latitudeDelta: 0.1, longitudeDelta: 0.05}}
+                />
+            );
+        }
+    };
+    //Premade with custom rendering for bubble and system messages
     return (
             <View style={[styles.all, {backgroundColor: theme}]}>
                 <GiftedChat 
@@ -82,6 +100,8 @@ const Communicate = function ( {route, navigation, db, isConnected}) {
                     renderBubble={renderBubble} 
                     renderSystemMessage={renderSystemMessage}
                     renderInputToolbar={renderInputToolbar}
+                    renderActions={renderCustomActions}
+                    renderCustomView={renderCustomView}
                     user={{_id: userId, name: name}} 
                     renderDay={function () {
                         return null;
@@ -92,7 +112,7 @@ const Communicate = function ( {route, navigation, db, isConnected}) {
             </View>
             );
 };
-
+//General styles especially for basic elements
 const styles = StyleSheet.create({
     all: {
         flex: 1
