@@ -62,26 +62,31 @@ const CustomActions = function ({wrapperStyle, iconTextStyle, themeHue, onSend, 
         //Similar process but with cmera launch instead
         const takeImage = async function () {
             var permission = await ImagePicker.requestCameraPermissionsAsync();
-            if (permission?.granted) {
-                var result = await ImagePicker.launchCameraAsync();
-                //Do if not cancelled (note: only accepts incorrect spelling of 'cancelled')
-                if (!result.canceled) {
-                    const imageURI = result.assets[0].uri;
-                    const uniqueId = generateReference(imageURI);
-                    const response = await fetch(imageURI);
-                    const blob = await response.blob();
-                    //Give the unique id to the new upload
-                    const newUploadRef = ref(storage, uniqueId);
-                    uploadBytes(newUploadRef, blob).then(async function (snap) {
-                        console.log('File is now uploaded.');
-                        const imageURL = await getDownloadURL(snap.ref);
-                        onSend({image: imageURL});
-                    });
+            try {
+                if (permission?.granted) {
+                    var result = await ImagePicker.launchCameraAsync();
+                    //Do if not cancelled (note: only accepts incorrect spelling of 'cancelled')
+                    if (!result.canceled) {
+                        const imageURI = result.assets[0].uri;
+                        const uniqueId = generateReference(imageURI);
+                        const response = await fetch(imageURI);
+                        const blob = await response.blob();
+                        //Give the unique id to the new upload
+                        const newUploadRef = ref(storage, uniqueId);
+                        uploadBytes(newUploadRef, blob).then(async function (snap) {
+                            console.log('File is now uploaded.');
+                            const imageURL = await getDownloadURL(snap.ref);
+                            onSend({image: imageURL});
+                        });
+                    } else {
+                        Alert.alert('You did not allow access to camera.');
+                    }
                 } else {
                     Alert.alert('You did not allow access to camera.');
                 }
-            } else {
-                Alert.alert('You did not allow access to camera.');
+            } catch (err) {
+                Alert.alert('Camera is unable to open because of a common technology error. Try on another device if possible.');
+                console.log(err);
             }
         };
         actionSheet.showActionSheetWithOptions({options: options, cancelButtonIndex: cancelButtonIndex},
