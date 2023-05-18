@@ -62,10 +62,11 @@ const CustomActions = function ({wrapperStyle, iconTextStyle, themeHue, onSend, 
         //Similar process but with cmera launch instead
         const takeImage = async function () {
             var permission = await ImagePicker.requestCameraPermissionsAsync();
+            //Try to launch camera and if it does not work say that the error is happening
             try {
                 if (permission?.granted) {
                     var result = await ImagePicker.launchCameraAsync();
-                    //Do if not cancelled (note: only accepts incorrect spelling of 'cancelled')
+                    //Do if upload not cancelled (note: only accepts incorrect spelling of 'cancelled')
                     if (!result.canceled) {
                         const imageURI = result.assets[0].uri;
                         const uniqueId = generateReference(imageURI);
