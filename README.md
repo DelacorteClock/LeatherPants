@@ -3,6 +3,31 @@
 LeatherPants is a simple app with a purpose of allowing people to talk about contemporary clothing and design. It is designed to be minimal and easy to use.
 ## How To Start
 (Expo on your phone or emulater is required.) You will need to download the zip of this repository (creation of TheLeathers), extract to a new folder, do npm instal and then use Expo CLI there to run expo start. You will then get a barcode which you can scan with a phone or emulater to start the app. You will need to create a google firebase and firestore project to customise. You can do this in the config for firebase in the App.js file.
+
+Download programming of the main branch at: &#171;github.com/DelacorteClock/LeatherPants/archive/refs/heads/main.zip&#187;
+
+Extract the contents of the zip into a folder.
+
+Run &#171;nvm install 16.19.0&#187; and &#171;nvm use 16.19.0&#187;
+
+Instal expo-cli globally to enable running of expo: &#171;npm instal -g expo-cli&#187;
+
+Open a mobile phone with Google Play and instal expo at &#171;play.google.com/store/apps/details?id=host.exp.exponent&#187;
+
+Make an expo account at &#171;expo.dev/signup&#187;
+
+Run &#171;expo login&#187; in the terminal and respond to instructions to login to the expo account.
+
+Also login to the expo account by entering the newly added expo app on your phone.
+
+Start the app by typing &#171;expo start&#187; in the terminal.
+
+Scan the QR code generated with the mobile phone containing expo or enter expo and click the button which says &#171;LeatherPants on {YOUR COMPUTER NAME}&#187;. The app should then open.
+
+## OPTIONAL : How To Customise With Your Own Firebase/Firestore
+
+If you do not want to receive/send messages through the default LeatherPants Firebase/Firestore and would prefer to use your own you can create a new project at &#171;firebase.google.com&#187;. Use the configuration info to replace the one currently contained in App.js at lines 16-24. Create a firestore database for messages and go to rules and change &#171;allow read, write: if false&#187; to &#171;allow read, write: if true&#187;; the messages collection will be created automatically by LeatherPants whenever you send the first message. Then create authentication in the project and select 'Anonymous' for temporary instant accounts. Finish by adding storage to the project (for images) and change &#171;allow read, write: if false&#187; to &#171;allow read, write: if true&#187;.
+
 ## How To Use
 To start conversing you must type a display name in the start screen. You can then choose a colour theme if you desire to do so. Here is the start screen before and after user choices got inputted:
 
