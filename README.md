@@ -2,8 +2,6 @@
 ## About
 LeatherPants is a simple app with a purpose of allowing people to talk about contemporary clothing and design. It is designed to be minimal and easy to use.
 ## How To Start
-(Expo on your phone or emulater is required.) You will need to download the zip of this repository (creation of TheLeathers), extract to a new folder, do npm instal and then use Expo CLI there to run expo start. You will then get a barcode which you can scan with a phone or emulater to start the app. You will need to create a google firebase and firestore project to customise. You can do this in the config for firebase in the App.js file.
-
 Download programming of the main branch at: &#171;github.com/DelacorteClock/LeatherPants/archive/refs/heads/main.zip&#187;
 
 Extract the contents of the zip into a folder.
